@@ -1,1 +1,1 @@
-![ZozoBalogg's GitHub stats](https://github-readme-stats.vercel.app/api?username=zozobalogh0817&show_icons=true&theme=radical)
+[![Most used langs](https://github-readme-stats.vercel.app/api/top-langs/?username=zozobalogh0817&langs_count=10)](https://github.com/anuraghazra/github-readme-stats)
