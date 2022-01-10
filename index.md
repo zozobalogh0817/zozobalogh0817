@@ -1,18 +1,11 @@
 ---
 layout: page
-title: Index
-options: { toc: true, menuItem: true, archived: false }
+title: Welcome page
+options: { toc: false, menuItem: true, archived: false }
 ---
 
-<h1>Welcome page</h1>
+### Be welcomed traveler
+This litle space where I share my ideas with along my already existing open-source projects.
 
-<p>
-    Pages :
-</p>
-
-{% for page in site.pages %}
-<div>
-    <a href="{{ site.path }}{{ page.url }}">{{ page.title }}</a>
-</div>
-
-{% endfor %}
+#### Hope to see you again
+**Stay tuned and also good traveling around**
