@@ -6,10 +6,12 @@ options: { toc: false, menuItem: true, archived: false }
 
 <img src="https://user-images.githubusercontent.com/67690333/148852202-984c4d7d-498d-43f4-88eb-49b2a7b4b026.gif" id="egggif" hidden>
 
+> Type ***cabata***
+
 <script>
 var egg = new Egg();
 egg
-  .addCode("up,up,down,down,left,right,left,right,b,a", function() {
+  .addCode("c,a,b,a,t,a", function() {
     jQuery('#egggif').fadeIn(500, function() {
       window.setTimeout(function() { jQuery('#egggif').hide(); }, 5000);
     });
