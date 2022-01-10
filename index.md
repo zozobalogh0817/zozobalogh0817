@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Welcome page
+title: Welcome
 options: { toc: false, menuItem: true, archived: false }
 ---
 
