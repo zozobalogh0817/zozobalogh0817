@@ -1,5 +1,5 @@
 title: 'Personal Blog'
-remote_theme: zozobalogh0817/wiki-theme@release/next
+remote_theme: zozobalogh0817/wiki-theme@v0.1.0-gecko.0
 url: 'https://zozobalogh0817.github.io/zozobalogh0817/'
 path: 'https://zozobalogh0817.github.io/zozobalogh0817'
 settings: {
