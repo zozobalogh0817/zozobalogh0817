@@ -1,4 +1,15 @@
-title:   'Personal Blog'
+title: 'Personal Blog'
 remote_theme: zozobalogh0817/wiki-theme
-url:  'https://zozobalogh0817.github.io/zozobalogh0817/'
+url: 'https://zozobalogh0817.github.io/zozobalogh0817/'
 path: 'https://zozobalogh0817.github.io/zozobalogh0817'
+settings: {
+  home: "/",
+  redirectTimeOut: 3,
+  private: true,
+  hasHeader: true,
+  headerType: h,
+  headerSize: 3,
+  contactUs: { ownerName: "Balogh Zoltán Sándor", supportEmail: "zoltan.balogh@avolantis.net" },
+  devToolsEnabled: true,
+  devToolsKey: cabata
+}
