@@ -7,7 +7,5 @@ settings: {
   redirectTimeOut: 3,
   private: true,
   hasHeader: true,
-  headerType: h,
-  headerSize: 4,
   contactUs: { ownerName: "Balogh Zoltán Sándor", supportEmail: "zoltan.balogh@avolantis.net" }
 }
