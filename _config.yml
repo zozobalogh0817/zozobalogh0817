@@ -9,7 +9,5 @@ settings: {
   hasHeader: true,
   headerType: h,
   headerSize: 3,
-  contactUs: { ownerName: "Balogh Zoltán Sándor", supportEmail: "zoltan.balogh@avolantis.net" },
-  devToolsEnabled: true,
-  devToolsKey: cabata
+  contactUs: { ownerName: "Balogh Zoltán Sándor", supportEmail: "zoltan.balogh@avolantis.net" }
 }
