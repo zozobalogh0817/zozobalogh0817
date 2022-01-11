@@ -8,6 +8,6 @@ settings: {
   private: true,
   hasHeader: true,
   headerType: h,
-  headerSize: 4,
+  headerSize: 3,
   contactUs: { ownerName: "Balogh Zoltán Sándor", supportEmail: "zoltan.balogh@avolantis.net" }
 }
