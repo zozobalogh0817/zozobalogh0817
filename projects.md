@@ -4,7 +4,7 @@ title: Projects
 options: { toc: false, menuItem: true, archived: false }
 ---
 
-<img src="https://user-images.githubusercontent.com/67690333/148852202-984c4d7d-498d-43f4-88eb-49b2a7b4b026.gif" id="egggif">
+<img src="https://user-images.githubusercontent.com/67690333/148852202-984c4d7d-498d-43f4-88eb-49b2a7b4b026.gif" id="egggif" style="display: none">
 
 > Type ***cabata***
 
