@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Welcome
-options: { toc: true, menuItem: true, archived: false }
+options: { toc: false, menuItem: true, archived: false }
 ---
 
 ## This is my profile page
