@@ -10,9 +10,24 @@ import hashlib
 # Account permissions: read:Followers, read:Starring, read:Watching
 # Repository permissions: read:Commit statuses, read:Contents, read:Issues, read:Metadata, read:Pull Requests
 # Issues and pull requests permissions not needed at the moment, but may be used in the future
-HEADERS = {'authorization': 'token '+ os.environ['ACCESS_TOKEN']}
-USER_NAME = os.environ['USER_NAME'] # 'Andrew6rant'
+TOKEN = os.getenv('ACCESS_TOKEN') or os.getenv('GITHUB_TOKEN') or ''
+if not TOKEN:
+    raise RuntimeError('ACCESS_TOKEN or GITHUB_TOKEN environment variable is required')
+HEADERS = {'authorization': 'token ' + TOKEN}
+USER_NAME = os.getenv('USER_NAME') or os.getenv('GITHUB_REPOSITORY_OWNER') or 'zozobalogh0817'  # default fallback
 QUERY_COUNT = {'user_getter': 0, 'follower_getter': 0, 'graph_repos_stars': 0, 'recursive_loc': 0, 'graph_commits': 0, 'loc_query': 0}
+
+# Default SVG templates (download if missing)
+TEMPLATE_DARK_URL = 'https://raw.githubusercontent.com/Andrew6rant/Andrew6rant/main/dark_mode.svg'
+TEMPLATE_LIGHT_URL = 'https://raw.githubusercontent.com/Andrew6rant/Andrew6rant/main/light_mode.svg'
+
+def ensure_svg_templates(dark_path: str = 'dark_mode.svg', light_path: str = 'light_mode.svg') -> None:
+    for url, path in ((TEMPLATE_DARK_URL, dark_path), (TEMPLATE_LIGHT_URL, light_path)):
+        if not os.path.exists(path):
+            resp = requests.get(url, timeout=30)
+            resp.raise_for_status()
+            with open(path, 'wb') as f:
+                f.write(resp.content)
 
 
 def daily_readme(birthday):
@@ -20,7 +35,16 @@ def daily_readme(birthday):
     Returns the length of time since I was born
     e.g. 'XX years, XX months, XX days'
     """
-    diff = relativedelta.relativedelta(datetime.datetime.today(), birthday)
+    # Normalize both now and birthday to UTC-aware datetimes
+    now = datetime.datetime.now(datetime.timezone.utc)
+
+    if isinstance(birthday, datetime.datetime):
+        bday = birthday.astimezone(datetime.timezone.utc) if birthday.tzinfo else birthday.replace(tzinfo=datetime.timezone.utc)
+    else:
+        # If a date object is provided, assume midnight UTC
+        bday = datetime.datetime(birthday.year, birthday.month, birthday.day, tzinfo=datetime.timezone.utc)
+
+    diff = relativedelta.relativedelta(now, bday)
     return '{} {}, {} {}, {} {}{}'.format(
         diff.years, 'year' + format_plural(diff.years), 
         diff.months, 'month' + format_plural(diff.months), 
@@ -304,6 +328,8 @@ def force_close_file(data, cache_comment):
     Forces the file to close, preserving whatever data was written to it
     This is needed because if this function is called, the program would've crashed before the file is properly saved and closed
     """
+    if not os.path.exists('cache'):
+        os.makedirs('cache')
     filename = 'cache/'+hashlib.sha256(USER_NAME.encode('utf-8')).hexdigest()+'.txt'
     with open(filename, 'w') as f:
         f.writelines(cache_comment)
@@ -453,15 +479,31 @@ if __name__ == '__main__':
     OWNER_ID, acc_date = user_data
     formatter('account data', user_time)
 
-    # Use BIRTHDAY_ISO environment variable if available, else use account creation date
+    # Use BIRTHDAY_ISO (YYYY-MM-DD or full ISO) if provided; otherwise use account creation date
     birthday_iso = os.getenv('BIRTHDAY_ISO')
-    if birthday_iso:
+
+    def parse_iso_as_aware(s: str) -> datetime.datetime:
+        s = s.strip()
+        # Handle GitHub ISO with 'Z'
+        if 'Z' in s:
+            s = s.replace('Z', '+00:00')
         try:
-            birthday = datetime.datetime.fromisoformat(birthday_iso)
-        except ValueError:
-            birthday = datetime.datetime.fromisoformat(acc_date.replace('Z', '+00:00'))
+            if 'T' in s or '+' in s or s.count('-') > 1:
+                dtv = datetime.datetime.fromisoformat(s)
+            else:
+                # date-only string: YYYY-MM-DD
+                y, m, d = map(int, s.split('-'))
+                dtv = datetime.datetime(y, m, d)
+        except Exception:
+            # Fallback to now-UTC if parsing fails (should not happen)
+            dtv = datetime.datetime.now(datetime.timezone.utc)
+        # Normalize to UTC-aware
+        return dtv.astimezone(datetime.timezone.utc) if dtv.tzinfo else dtv.replace(tzinfo=datetime.timezone.utc)
+
+    if birthday_iso:
+        birthday = parse_iso_as_aware(birthday_iso)
     else:
-        birthday = datetime.datetime.fromisoformat(acc_date.replace('Z', '+00:00'))
+        birthday = parse_iso_as_aware(acc_date)  # e.g. '2019-11-03T21:15:07Z'
 
     age_data, age_time = perf_counter(daily_readme, birthday)
     formatter('age calculation', age_time)
@@ -475,6 +517,7 @@ if __name__ == '__main__':
 
     for index in range(len(total_loc)-1): total_loc[index] = '{:,}'.format(total_loc[index]) # format added, deleted, and total LOC
 
+    ensure_svg_templates('dark_mode.svg', 'light_mode.svg')
     svg_overwrite('dark_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
     svg_overwrite('light_mode.svg', age_data, commit_data, star_data, repo_data, contrib_data, follower_data, total_loc[:-1])
 
