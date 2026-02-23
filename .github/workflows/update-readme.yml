@@ -6,7 +6,7 @@ on:
   workflow_dispatch: {}
   push:
     paths:
-      - 'scripts/update_readme.py'
+      - 'scripts/**'
       - '.github/workflows/update-readme.yml'
       - 'README.md'
 
@@ -27,20 +27,27 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Update README dynamic section
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies for today.py integration
         run: |
-          python --version
-          python scripts/update_readme.py
+          python -m pip install --upgrade pip
+          pip install requests python-dateutil lxml
+
+      - name: Generate today.svg cards (dark/light)
+        env:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USER_NAME: ${{ github.repository_owner }}
+          # Optionally set BIRTHDAY_ISO: 'YYYY-MM-DD' to use your real birthday for the Uptime line
+          # BIRTHDAY_ISO: '1990-01-31'
+        run: |
+          python today.py
 
       - name: Commit and push changes (if any)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain README.md)" ]; then
-            git add README.md
-            git commit -m "chore(readme): automated update $(date -u +'%Y-%m-%d %H:%M:%S')"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "chore: automated profile update $(date -u +'%Y-%m-%d %H:%M:%S')"
             git push
           else
             echo "No changes to commit."
